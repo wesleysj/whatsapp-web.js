@@ -17,8 +17,20 @@ class LocalWebCache extends WebCache {
         this.strict = options.strict || false;
     }
 
+    _sanitizeVersion(version) {
+        return String(version).replace(/[^0-9.]/g, '');
+    }
+
+    _validateVersion(version) {
+        if(/[\\/]/.test(version)) {
+            throw new Error('Invalid version, path separators are not allowed.');
+        }
+    }
+
     async resolve(version) {
-        const filePath = path.join(this.path, `${version}.html`);
+        this._validateVersion(version);
+        const sanitized = this._sanitizeVersion(version);
+        const filePath = path.join(this.path, `${sanitized}.html`);
         
         try {
             return fs.readFileSync(filePath, 'utf-8');
@@ -30,8 +42,9 @@ class LocalWebCache extends WebCache {
     }
 
     async persist(indexHtml, version) {
-        // version = (version+'').replace(/[^0-9.]/g,'');
-        const filePath = path.join(this.path, `${version}.html`);
+        this._validateVersion(version);
+        const sanitized = this._sanitizeVersion(version);
+        const filePath = path.join(this.path, `${sanitized}.html`);
         fs.mkdirSync(this.path, { recursive: true });
         fs.writeFileSync(filePath, indexHtml);
     }
