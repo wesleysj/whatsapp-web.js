@@ -1278,6 +1278,10 @@ declare namespace WAWebJS {
         filename?: string
         unsafeMime?: boolean
         reqOptions?: RequestInit
+        allowedHosts?: string[]
+        deniedHosts?: string[]
+        allowedProtocols?: string[]
+        validateUrl?: (url: string) => boolean
     }
 
     /** Media attached to a message */

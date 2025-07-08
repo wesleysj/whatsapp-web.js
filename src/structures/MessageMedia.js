@@ -61,11 +61,41 @@ class MessageMedia {
      * @param {string} [options.filename]
      * @param {object} [options.client]
      * @param {object} [options.reqOptions]
+     * @param {string[]} [options.allowedHosts] Array of allowed hostnames
+     * @param {string[]} [options.deniedHosts] Array of denied hostnames
+     * @param {string[]} [options.allowedProtocols=['https:']] Allowed URL protocols
+     * @param {function} [options.validateUrl] Custom URL validation callback, return true to allow
      * @param {number} [options.reqOptions.size=0]
      * @returns {Promise<MessageMedia>}
      */
     static async fromUrl(url, options = {}) {
+        const {
+            allowedHosts,
+            deniedHosts,
+            allowedProtocols = ['https:'],
+            validateUrl
+        } = options;
+
         const pUrl = new URL(url);
+
+        if (validateUrl) {
+            if (!validateUrl(url)) {
+                throw new Error('URL validation failed');
+            }
+        } else {
+            if (allowedProtocols && !allowedProtocols.includes(pUrl.protocol)) {
+                throw new Error('Unsupported URL protocol');
+            }
+
+            if (allowedHosts && !allowedHosts.includes(pUrl.hostname)) {
+                throw new Error('URL host not allowed');
+            }
+
+            if (deniedHosts && deniedHosts.includes(pUrl.hostname)) {
+                throw new Error('URL host denied');
+            }
+        }
+
         let mimetype = mime.getType(pUrl.pathname);
 
         if (!mimetype && !options.unsafeMime)
