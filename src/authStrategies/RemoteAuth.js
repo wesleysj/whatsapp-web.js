@@ -158,15 +158,27 @@ class RemoteAuth extends BaseAuthStrategy {
         });
     }
 
+    async validateZipEntries(zipPath) {
+        const directory = await unzipper.Open.file(zipPath);
+        const destDir = path.resolve(this.userDataDir);
+
+        for (const file of directory.files) {
+            const entryPath = file.path;
+            if (entryPath.includes('..') || path.isAbsolute(entryPath)) {
+                throw new Error('Unsafe path detected in zip entry');
+            }
+            const resolved = path.resolve(destDir, entryPath);
+            if (!resolved.startsWith(destDir + path.sep)) {
+                throw new Error('Unsafe path detected in zip entry');
+            }
+        }
+
+        return directory;
+    }
+
     async unCompressSession(compressedSessionPath) {
-        var stream = fs.createReadStream(compressedSessionPath);
-        await new Promise((resolve, reject) => {
-            stream.pipe(unzipper.Extract({
-                path: this.userDataDir
-            }))
-                .on('error', err => reject(err))
-                .on('finish', () => resolve());
-        });
+        const directory = await this.validateZipEntries(compressedSessionPath);
+        await directory.extract({ path: this.userDataDir });
         await fs.promises.unlink(compressedSessionPath);
     }
 
