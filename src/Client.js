@@ -101,7 +101,8 @@ class Client extends EventEmitter {
         if (isCometOrAbove) {
             await this.pupPage.evaluate(ExposeAuthStore);
         } else {
-            await this.pupPage.evaluate(ExposeLegacyAuthStore, moduleRaid.toString());
+            const mR = await this.pupPage.evaluate(moduleRaid);
+            await this.pupPage.evaluate(ExposeLegacyAuthStore, mR);
         }
 
         const needAuthentication = await this.pupPage.evaluate(async () => {

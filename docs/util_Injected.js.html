@@ -32,10 +32,8 @@
             <pre class="prettyprint linenums"><code>&#x27;use strict&#x27;;
 
 // Exposes the internal Store to the WhatsApp Web client
-exports.ExposeStore &#x3D; (moduleRaidStr) &#x3D;&gt; {
-    eval(&#x27;var moduleRaid &#x3D; &#x27; + moduleRaidStr);
-    // eslint-disable-next-line no-undef
-    window.mR &#x3D; moduleRaid();
+exports.ExposeStore &#x3D; (mR) &#x3D;&gt; {
+    window.mR &#x3D; mR;
     window.Store &#x3D; Object.assign({}, window.mR.findModule(m &#x3D;&gt; m.default &amp;amp;&amp;amp; m.default.Chat)[0].default);
     window.Store.AppState &#x3D; window.mR.findModule(&#x27;Socket&#x27;)[0].Socket;
     window.Store.Conn &#x3D; window.mR.findModule(&#x27;Conn&#x27;)[0].Conn;
