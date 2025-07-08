@@ -2,10 +2,8 @@
 
 //TODO: To be removed by version 2.3000.x hard release
 
-exports.ExposeLegacyAuthStore = (moduleRaidStr) => {
-    eval('var moduleRaid = ' + moduleRaidStr);
-    // eslint-disable-next-line no-undef
-    window.mR = moduleRaid();
+exports.ExposeLegacyAuthStore = (mR) => {
+    window.mR = mR;
     window.AuthStore = {};
     window.AuthStore.AppState = window.mR.findModule('Socket')[0].Socket;
     window.AuthStore.Cmd = window.mR.findModule('Cmd')[0].Cmd;
@@ -18,5 +16,4 @@ exports.ExposeLegacyAuthStore = (moduleRaidStr) => {
         ...window.mR.findModule('verifyKeyIndexListAccountSignature')[0],
         ...window.mR.findModule('waNoiseInfo')[0],
         ...window.mR.findModule('waSignalStore')[0],
-    };
-};
+    };};
