@@ -41,7 +41,7 @@
     "chai": "^6.0.1",
     "chai-as-promised": "^8.0.2",
     "dotenv": "^16.0.0",
-    "eslint": "^9.35.0",
+    "eslint": "^10.1.0",
     "eslint-plugin-mocha": "^11.1.0",
     "jsdoc": "^3.6.4",
     "jsdoc-baseline": "^0.1.5",
